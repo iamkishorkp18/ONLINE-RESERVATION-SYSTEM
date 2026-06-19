@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KP Travels – Book a Ticket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #f0f6ff;
+            display: flex; flex-direction: column;
+        }
+        /* Header */
+        .main-header {
+            width:100%; height:70px; position:fixed; top:0; left:0; z-index:100;
+            display:flex; align-items:center; justify-content:space-between; padding:0 40px;
+            background:rgba(7,23,57,0.92); backdrop-filter:blur(14px);
+            border-bottom:1px solid rgba(255,255,255,0.08);
+        }
+        .header-logo { color:white; font-family:'Poppins',sans-serif; font-size:22px; font-weight:800; text-decoration:none; display:flex; align-items:center; gap:10px; }
+        .header-logo span { color:#00c6ff; }
+        .header-nav { display:flex; gap:6px; }
+        .header-nav a { color:rgba(255,255,255,0.8); text-decoration:none; font-size:15px; font-weight:500; padding:7px 14px; border-radius:8px; transition:all 0.2s; }
+        .header-nav a:hover { background:rgba(255,255,255,0.12); color:white; }
+        /* Page */
+        .page-wrap { margin-top:70px; padding:50px 20px; flex:1; display:flex; flex-direction:column; align-items:center; }
+        .page-title { text-align:center; margin-bottom:36px; }
+        .page-title h1 { font-family:'Poppins',sans-serif; font-size:30px; font-weight:800; color:#071739; }
+        .page-title p { color:#666; margin-top:6px; }
+        /* Tabs */
+        .tabs { display:flex; gap:12px; margin-bottom:32px; flex-wrap:wrap; justify-content:center; }
+        .tab-btn {
+            padding:10px 24px; border-radius:10px; border:2px solid #e0e8f0;
+            background:white; font-size:15px; font-weight:600; font-family:'Poppins',sans-serif;
+            cursor:pointer; color:#555; transition:all 0.2s;
+        }
+        .tab-btn.active, .tab-btn:hover { background:linear-gradient(135deg,#00c6ff,#0072ff); color:white; border-color:transparent; }
+        /* Form Card */
+        .form-card {
+            background:white; border-radius:20px; padding:36px 40px;
+            box-shadow:0 8px 32px rgba(7,23,57,0.10); width:100%; max-width:600px;
+        }
+        /* Info Note (NEW) */
+        .info-note {
+            background:#fff8e1; border:1px solid #ffe082; border-radius:10px;
+            padding:12px 16px; margin-bottom:20px; font-size:13px; color:#7a5800;
+            display:flex; gap:10px; align-items:flex-start; line-height:1.6;
+        }
+        .info-note i { margin-top:2px; color:#f59e0b; flex-shrink:0; }
+        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .form-group { display:flex; flex-direction:column; margin-bottom:18px; }
+        .form-group.full { grid-column:1/-1; }
+        .form-group label { font-size:12px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px; }
+        .form-group input, .form-group select {
+            padding:12px 14px; border:1.5px solid #e0e8f0; border-radius:10px;
+            font-size:15px; color:#1a1a2e; background:#f8faff; font-family:'Inter',sans-serif; outline:none;
+            transition:border 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus { border-color:#00c6ff; background:white; }
+        .btn-submit {
+            width:100%; padding:14px; margin-top:6px;
+            background:linear-gradient(135deg,#00c6ff,#0072ff);
+            color:white; border:none; border-radius:12px;
+            font-size:16px; font-weight:700; font-family:'Poppins',sans-serif;
+            cursor:pointer; transition:transform 0.15s, box-shadow 0.15s;
+        }
+        .btn-submit:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,114,255,0.35); }
+        /* Footer */
+        .footer { background:#071739; color:white; text-align:center; padding:22px; font-size:13px; color:rgba(255,255,255,0.4); margin-top:auto; }
+        @media(max-width:600px){ .form-card{padding:24px 16px;} .form-row{grid-template-columns:1fr;} .main-header{padding:0 16px;} .header-nav a{font-size:13px;padding:6px 8px;} }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <a href="home.jsp" class="header-logo"><i class="fas fa-paper-plane"></i> KP <span>Travels</span></a>
+    <nav class="header-nav">
+        <a href="home.jsp"><i class="fas fa-home"></i> Home</a>
+        <a href="cancel.html"><i class="fas fa-times-circle"></i> Cancel</a>
+        <a href="ProfileServlet"><i class="fas fa-user"></i> Profile</a>
+        <a href="LogoutServlet" style="color:#ff8a8a;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+</header>
+
+<div class="page-wrap">
+    <div class="page-title">
+        <h1>Book Your Ticket</h1>
+        <p>Fast, secure reservations across all travel modes</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('train', this)">🚆 Train</button>
+        <button class="tab-btn" onclick="switchTab('bus', this)">🚌 Bus</button>
+        <button class="tab-btn" onclick="switchTab('flight', this)">✈️ Flight</button>
+    </div>
+
+    <div class="form-card">
+
+        <!-- ✅ Info note explaining why we ask for passenger contact -->
+        <div class="info-note">
+            <i class="fas fa-info-circle"></i>
+            <span>Booking confirmation and e-ticket will be sent to the <strong>passenger's</strong> email and phone number entered below — not your account email. This lets you book on behalf of someone else.</span>
+        </div>
+
+        <form action="ReservationServlet" method="post" id="reservationForm">
+            <input type="hidden" name="travelType" id="travelTypeInput" value="train">
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Passenger Name</label>
+                    <input type="text" name="name" placeholder="Full Name" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-birthday-cake"></i> Age</label>
+                    <input type="number" name="age" placeholder="Age" min="1" max="120" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Passenger Email</label>
+                    <input type="email" name="passengerEmail" placeholder="email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Passenger Phone</label>
+                    <input type="text" name="passengerPhone" placeholder="+91 XXXXX XXXXX" required maxlength="13">
+                </div>
+                <div class="form-group" id="trainNoGroup">
+                    <label><i class="fas fa-hashtag"></i> Train Number</label>
+                    <input type="text" name="trainNo" placeholder="e.g. 12345">
+                </div>
+                <div class="form-group" id="trainNameGroup">
+                    <label><i class="fas fa-train"></i> Train / Service Name</label>
+                    <input type="text" name="trainName" placeholder="e.g. Rajdhani Express">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-couch"></i> Class / Seat Type</label>
+                    <select name="classType">
+                        <option value="First Class">First Class</option>
+                        <option value="Second Class">Second Class</option>
+                        <option value="Sleeper">Sleeper</option>
+                        <option value="AC">AC</option>
+                        <option value="Business">Business</option>
+                        <option value="Economy">Economy</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Journey Date</label>
+                    <input type="date" name="journeyDate" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> From</label>
+                    <input type="text" name="fromPlace" placeholder="Departure City" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-pin"></i> To</label>
+                    <input type="text" name="toPlace" placeholder="Destination City" required>
+                </div>
+            </div>
+            <button type="submit" class="btn-submit"><i class="fas fa-ticket-alt"></i> Confirm Booking</button>
+        </form>
+    </div>
+</div>
+
+<footer class="footer">© 2026 KP Travels | All Rights Reserved</footer>
+
+<script>
+    // Pre-fill from search params if redirected from home
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('from'))  document.querySelector('[name=fromPlace]').value = p.get('from');
+    if (p.get('to'))    document.querySelector('[name=toPlace]').value   = p.get('to');
+    if (p.get('date'))  document.querySelector('[name=journeyDate]').value = p.get('date');
+    if (p.get('type')) {
+        switchTabByType(p.get('type'));
+    }
+
+    // Set min date
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelector('[name=journeyDate]').min = today;
+
+    function switchTab(type, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('travelTypeInput').value = type;
+        const trainLabel = document.querySelector('[name=trainName]').closest('.form-group').querySelector('label');
+        const trainNo    = document.getElementById('trainNoGroup');
+        if (type === 'train') {
+            trainLabel.innerHTML = "<i class='fas fa-train'></i> Train Name";
+            trainNo.style.display = 'flex';
+        } else if (type === 'bus') {
+            trainLabel.innerHTML = "<i class='fas fa-bus'></i> Bus Service Name";
+            trainNo.style.display = 'none';
+        } else {
+            trainLabel.innerHTML = "<i class='fas fa-plane'></i> Flight Number";
+            trainNo.style.display = 'none';
+        }
+    }
+
+    function switchTabByType(type) {
+        const btns = document.querySelectorAll('.tab-btn');
+        const map = { train:0, bus:1, flight:2 };
+        if (map[type] !== undefined) switchTab(type, btns[map[type]]);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KP Travels – About Us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; min-height:100vh; background:#f0f6ff; display:flex; flex-direction:column; }
+
+        /* Header */
+        .main-header {
+            width:100%; height:70px; position:fixed; top:0; left:0; z-index:100;
+            display:flex; align-items:center; justify-content:space-between; padding:0 40px;
+            background:rgba(7,23,57,0.92); backdrop-filter:blur(14px);
+            border-bottom:1px solid rgba(255,255,255,0.08);
+        }
+        .header-logo { color:white; font-family:'Poppins',sans-serif; font-size:22px; font-weight:800; text-decoration:none; display:flex; align-items:center; gap:10px; }
+        .header-logo span { color:#00c6ff; }
+        .header-nav { display:flex; gap:6px; }
+        .header-nav a { color:rgba(255,255,255,0.8); text-decoration:none; font-size:15px; font-weight:500; padding:7px 14px; border-radius:8px; transition:all 0.2s; }
+        .header-nav a:hover { background:rgba(255,255,255,0.12); color:white; }
+        .header-nav a.active { background:rgba(0,198,255,0.15); color:#00c6ff; }
+
+        /* Hero */
+        .about-hero {
+            margin-top:70px;
+            background:linear-gradient(135deg,#071739 0%,#0a2a6e 50%,#0d3b8e 100%);
+            padding:70px 20px 90px; text-align:center; position:relative; overflow:hidden;
+        }
+        .about-hero::before {
+            content:''; position:absolute; width:500px; height:500px;
+            background:radial-gradient(circle,rgba(0,198,255,0.15) 0%,transparent 70%);
+            top:-120px; right:-100px; pointer-events:none;
+        }
+        .about-hero .badge {
+            display:inline-block; background:rgba(0,198,255,0.15); border:1px solid rgba(0,198,255,0.4);
+            color:#00c6ff; font-size:13px; font-weight:600; padding:5px 16px; border-radius:20px;
+            margin-bottom:18px; letter-spacing:1px; text-transform:uppercase;
+        }
+        .about-hero h1 {
+            font-family:'Poppins',sans-serif; font-size:clamp(28px,5vw,46px); font-weight:800;
+            color:white; margin-bottom:14px;
+        }
+        .about-hero h1 span { color:#ffe66d; }
+        .about-hero p { color:rgba(255,255,255,0.7); font-size:16px; max-width:600px; margin:0 auto; line-height:1.7; }
+
+        /* Sections */
+        .section { padding:64px 40px; max-width:1100px; margin:0 auto; width:100%; }
+        .section-title { text-align:center; margin-bottom:44px; }
+        .section-title h2 { font-family:'Poppins',sans-serif; font-size:30px; font-weight:800; color:#071739; }
+        .section-title p { color:#666; margin-top:8px; font-size:15px; }
+        .section-title .line { width:50px; height:4px; background:linear-gradient(90deg,#00c6ff,#0072ff); border-radius:2px; margin:12px auto 0; }
+
+        /* Story Section */
+        .story-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; }
+        .story-text p { color:#555; font-size:15.5px; line-height:1.8; margin-bottom:16px; }
+        .story-text strong { color:#071739; }
+        .story-visual {
+            background:linear-gradient(135deg,#071739,#0a2a6e); border-radius:24px;
+            padding:48px 32px; text-align:center; position:relative; overflow:hidden;
+        }
+        .story-visual::before {
+            content:''; position:absolute; width:220px; height:220px;
+            background:rgba(0,198,255,0.15); border-radius:50%; top:-60px; right:-50px;
+        }
+        .story-visual .big-icon { font-size:64px; margin-bottom:16px; }
+        .story-visual h3 { font-family:'Poppins',sans-serif; color:white; font-size:22px; font-weight:800; margin-bottom:8px; }
+        .story-visual p { color:rgba(255,255,255,0.6); font-size:14px; }
+
+        /* Stats */
+        .stats-bar {
+            background:linear-gradient(135deg,#071739,#0a2a6e); padding:50px 40px;
+            display:flex; justify-content:center; flex-wrap:wrap; gap:50px;
+        }
+        .stat-item { text-align:center; }
+        .stat-item .number { font-family:'Poppins',sans-serif; font-size:38px; font-weight:800; color:#00c6ff; line-height:1; }
+        .stat-item .label { color:rgba(255,255,255,0.65); font-size:14px; margin-top:6px; }
+
+        /* Values Grid */
+        .values-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:24px; }
+        .value-card {
+            background:white; border-radius:18px; padding:32px 26px; text-align:center;
+            box-shadow:0 4px 20px rgba(7,23,57,0.08); transition:transform 0.25s, box-shadow 0.25s;
+            border:1.5px solid transparent;
+        }
+        .value-card:hover { transform:translateY(-6px); box-shadow:0 12px 36px rgba(7,23,57,0.14); border-color:#00c6ff; }
+        .value-icon {
+            width:64px; height:64px; border-radius:16px; margin:0 auto 18px;
+            background:linear-gradient(135deg,rgba(0,198,255,0.12),rgba(0,114,255,0.12));
+            display:flex; align-items:center; justify-content:center; font-size:28px;
+        }
+        .value-card h3 { font-family:'Poppins',sans-serif; font-size:18px; font-weight:700; color:#071739; margin-bottom:10px; }
+        .value-card p { color:#666; font-size:14px; line-height:1.6; }
+
+        /* Team */
+        .team-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:28px; }
+        .team-card { background:white; border-radius:18px; padding:30px 24px; text-align:center; box-shadow:0 4px 20px rgba(7,23,57,0.08); }
+        .team-avatar {
+            width:84px; height:84px; border-radius:50%; margin:0 auto 16px;
+            background:linear-gradient(135deg,#00c6ff,#0072ff); display:flex; align-items:center; justify-content:center;
+            font-family:'Poppins',sans-serif; font-size:28px; font-weight:800; color:white;
+        }
+        .team-card h4 { font-family:'Poppins',sans-serif; font-size:17px; font-weight:700; color:#071739; margin-bottom:4px; }
+        .team-card .role { color:#0072ff; font-size:13px; font-weight:600; margin-bottom:10px; }
+        .team-card p { color:#888; font-size:13px; }
+
+        /* CTA */
+        .cta-section {
+            background:linear-gradient(135deg,#071739,#0a2a6e); border-radius:24px;
+            padding:54px 40px; text-align:center; margin:0 40px 64px; position:relative; overflow:hidden;
+            max-width:1020px; margin-left:auto; margin-right:auto;
+        }
+        .cta-section::before {
+            content:''; position:absolute; width:300px; height:300px;
+            background:radial-gradient(circle,rgba(0,198,255,0.15) 0%,transparent 70%);
+            bottom:-100px; left:-80px;
+        }
+        .cta-section h2 { font-family:'Poppins',sans-serif; font-size:26px; font-weight:800; color:white; margin-bottom:10px; }
+        .cta-section p { color:rgba(255,255,255,0.65); font-size:15px; margin-bottom:26px; }
+        .cta-btn {
+            display:inline-block; padding:13px 32px; background:linear-gradient(135deg,#00c6ff,#0072ff);
+            color:white; border-radius:12px; text-decoration:none; font-weight:700;
+            font-family:'Poppins',sans-serif; font-size:15px; transition:transform 0.15s, box-shadow 0.15s;
+        }
+        .cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,114,255,0.35); }
+
+        /* Footer */
+        .footer { background:#071739; color:white; padding:60px 40px 0; margin-top:auto; }
+        .footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; max-width:1100px; margin:0 auto 50px; }
+        .footer-brand h2 { font-family:'Poppins',sans-serif; font-size:22px; font-weight:800; color:#00c6ff; margin-bottom:12px; }
+        .footer-brand p { color:rgba(255,255,255,0.6); font-size:14px; line-height:1.7; max-width:260px; }
+        .footer-col h4 { font-family:'Poppins',sans-serif; font-size:15px; font-weight:700; color:#00c6ff; margin-bottom:16px; }
+        .footer-col a { display:block; color:rgba(255,255,255,0.65); text-decoration:none; font-size:14px; margin-bottom:10px; }
+        .footer-col a:hover { color:white; }
+        .footer-col p { display:flex; align-items:center; gap:8px; color:rgba(255,255,255,0.65); font-size:14px; margin-bottom:10px; }
+        .footer-col p a { display:inline; margin:0; }
+        .social-links { display:flex; gap:14px; margin-top:18px; }
+        .social-links a { width:38px; height:38px; background:rgba(255,255,255,0.08); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:16px; text-decoration:none; transition:background 0.2s; }
+        .social-links a:hover { background:#00c6ff; }
+        .footer-bottom { border-top:1px solid rgba(255,255,255,0.1); text-align:center; padding:18px 0; color:rgba(255,255,255,0.4); font-size:13px; max-width:1100px; margin:0 auto; }
+
+        @media(max-width:768px){
+            .main-header{padding:0 16px;}
+            .header-nav a{font-size:13px;padding:6px 8px;}
+            .story-grid{grid-template-columns:1fr;}
+            .section{padding:48px 20px;}
+            .footer-grid{grid-template-columns:1fr 1fr;}
+            .cta-section{margin:0 16px 48px;padding:40px 24px;}
+        }
+        @media(max-width:480px){ .footer-grid{grid-template-columns:1fr;} }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <a href="home.jsp" class="header-logo"><i class="fas fa-paper-plane"></i> KP <span>Travels</span></a>
+    <nav class="header-nav">
+        <a href="home.jsp"><i class="fas fa-home"></i> Home</a>
+        <a href="reservation.html"><i class="fas fa-ticket-alt"></i> Book</a>
+        <a href="about.html" class="active"><i class="fas fa-info-circle"></i> About</a>
+        <a href="LogoutServlet" style="color:#ff8a8a;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+</header>
+
+<!-- Hero -->
+<section class="about-hero">
+    <span class="badge"><i class="fas fa-route"></i> Our Story</span>
+    <h1>Connecting India, <span>One Journey</span> at a Time</h1>
+    <p>KP Travels was built with one simple mission — make booking trains, buses, and flights fast, secure, and stress-free for every traveller.</p>
+</section>
+
+<!-- Story -->
+<section class="section">
+    <div class="story-grid">
+        <div class="story-text">
+            <p><strong>KP Travels</strong> started as a small idea: travel booking shouldn't be complicated. Too many platforms made it hard to compare options, track bookings, or get real support when something went wrong.</p>
+            <p>We set out to build a single platform where anyone could search, book, pay, and manage their train, bus, and flight tickets — all from one clean, simple dashboard.</p>
+            <p>Today, KP Travels helps thousands of travellers across India plan their journeys with confidence, backed by instant confirmations, secure payments, and round-the-clock support.</p>
+        </div>
+        <div class="story-visual">
+            <div class="big-icon">✈️</div>
+            <h3>Explore More, Worry Less</h3>
+            <p>One platform for all your travel needs</p>
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-bar">
+    <div class="stat-item"><div class="number">50K+</div><div class="label">Happy Travellers</div></div>
+    <div class="stat-item"><div class="number">1,200+</div><div class="label">Routes Covered</div></div>
+    <div class="stat-item"><div class="number">98%</div><div class="label">On-Time Bookings</div></div>
+    <div class="stat-item"><div class="number">24/7</div><div class="label">Customer Support</div></div>
+</div>
+
+<!-- Values -->
+<section class="section">
+    <div class="section-title">
+        <h2>What We Stand For</h2>
+        <p>The values that guide everything we build</p>
+        <div class="line"></div>
+    </div>
+    <div class="values-grid">
+        <div class="value-card">
+            <div class="value-icon">⚡</div>
+            <h3>Speed</h3>
+            <p>Search, book, and confirm your ticket in under a minute — no unnecessary steps.</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon">🔒</div>
+            <h3>Security</h3>
+            <p>Every transaction is encrypted and protected, so you can pay with full confidence.</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon">🤝</div>
+            <h3>Trust</h3>
+            <p>Transparent pricing and honest policies — what you see is exactly what you pay.</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon">💬</div>
+            <h3>Support</h3>
+            <p>Real help when you need it, through email, phone, or our support team — anytime.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Team -->
+<section class="section">
+    <div class="section-title">
+        <h2>Meet the Team</h2>
+        <p>The people behind KP Travels</p>
+        <div class="line"></div>
+    </div>
+    <div class="team-grid">
+        <div class="team-card">
+            <div class="team-avatar">K</div>
+            <h4>kantharaju gari kishor</h4>
+            <div class="role">Founder & Developer</div>
+            <p>Built KP Travels from the ground up, end to end.</p>
+        </div>
+        <div class="team-card">
+            <div class="team-avatar">S</div>
+            <h4>Support Team</h4>
+            <div class="role">Customer Care</div>
+            <p>Here to help with bookings, cancellations, and more.</p>
+        </div>
+        <div class="team-card">
+            <div class="team-avatar">O</div>
+            <h4>Operations</h4>
+            <div class="role">Route & Schedule Management</div>
+            <p>Keeping train, bus, and flight data accurate and up to date.</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+    <h2>Ready to Plan Your Next Trip?</h2>
+    <p>Join thousands of travellers booking smarter with KP Travels.</p>
+    <a href="reservation.html" class="cta-btn"><i class="fas fa-ticket-alt"></i> Book a Ticket Now</a>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <h2><i class="fas fa-paper-plane"></i> KP Travels</h2>
+            <p>Explore more, worry less. One platform for all your travel reservations — fast, secure, and reliable.</p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/"  target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.linkedin.com/"  target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.twitter.com/"   target="_blank"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <a href="home.jsp">Home</a>
+            <a href="reservation.html">Book Ticket</a>
+            <a href="cancel.html">Cancel Booking</a>
+            <a href="ProfileServlet">My Profile</a>
+        </div>
+        <div class="footer-col">
+            <h4>Services</h4>
+            <a href="reservation.html?type=train">Train Booking</a>
+            <a href="reservation.html?type=bus">Bus Booking</a>
+            <a href="reservation.html?type=flight">Flight Booking</a>
+        </div>
+        <div class="footer-col">
+            <h4>Contact Us</h4>
+            <p><span>📧</span><a href="mailto:kptravels19@gmail.com" style="color:rgba(255,255,255,0.65);text-decoration:none;">kptravels19@gmail.com</a></p>
+            <p><span>📞</span><a href="tel:+917416243708" style="color:rgba(255,255,255,0.65);text-decoration:none;">+91 7416243708</a></p>
+            <p><span>📍</span><a href="https://maps.google.com/?q=Andhra+Pradesh,India" target="_blank" style="color:rgba(255,255,255,0.65);text-decoration:none;">Andhra Pradesh, India</a></p>
+        </div>
+    </div>
+    <div class="footer-bottom">© 2026 KP Travels | All Rights Reserved</div>
+</footer>
+
+</body>
+</html>

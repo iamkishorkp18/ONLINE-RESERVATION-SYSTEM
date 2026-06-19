@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KP Travels – Cancel Ticket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; min-height:100vh; background:#f0f6ff; display:flex; flex-direction:column; }
+        .main-header {
+            width:100%; height:70px; position:fixed; top:0; left:0; z-index:100;
+            display:flex; align-items:center; justify-content:space-between; padding:0 40px;
+            background:rgba(7,23,57,0.92); backdrop-filter:blur(14px);
+            border-bottom:1px solid rgba(255,255,255,0.08);
+        }
+        .header-logo { color:white; font-family:'Poppins',sans-serif; font-size:22px; font-weight:800; text-decoration:none; display:flex; align-items:center; gap:10px; }
+        .header-logo span { color:#00c6ff; }
+        .header-nav { display:flex; gap:6px; }
+        .header-nav a { color:rgba(255,255,255,0.8); text-decoration:none; font-size:15px; font-weight:500; padding:7px 14px; border-radius:8px; transition:all 0.2s; }
+        .header-nav a:hover { background:rgba(255,255,255,0.12); color:white; }
+
+        .page-wrap { margin-top:70px; padding:60px 20px; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        .page-title { text-align:center; margin-bottom:36px; }
+        .page-title .icon { font-size:52px; margin-bottom:14px; display:block; }
+        .page-title h1 { font-family:'Poppins',sans-serif; font-size:30px; font-weight:800; color:#071739; }
+        .page-title p { color:#666; margin-top:8px; font-size:15px; }
+
+        .form-card { background:white; border-radius:20px; padding:40px; box-shadow:0 8px 32px rgba(7,23,57,0.10); width:100%; max-width:480px; }
+
+        .form-group { margin-bottom:20px; }
+        .form-group label { display:block; font-size:12px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px; }
+        .form-group input {
+            width:100%; padding:14px 16px; border:1.5px solid #e0e8f0; border-radius:12px;
+            font-size:16px; color:#1a1a2e; background:#f8faff; font-family:'Inter',sans-serif; outline:none;
+            transition:border 0.2s; letter-spacing:2px;
+        }
+        .form-group input:focus { border-color:#00c6ff; background:white; }
+        .form-group input::placeholder { letter-spacing:0px; }
+
+        .btn-cancel {
+            width:100%; padding:14px;
+            background:linear-gradient(135deg,#ff416c,#ff4b2b);
+            color:white; border:none; border-radius:12px;
+            font-size:16px; font-weight:700; font-family:'Poppins',sans-serif;
+            cursor:pointer; transition:transform 0.15s, box-shadow 0.15s;
+            display:flex; align-items:center; justify-content:center; gap:8px;
+        }
+        .btn-cancel:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,65,108,0.4); }
+
+        .back-link { text-align:center; margin-top:20px; }
+        .back-link a { color:#0072ff; text-decoration:none; font-size:14px; font-weight:600; }
+        .back-link a:hover { text-decoration:underline; }
+
+        .info-box {
+            background:#fff8e1; border:1px solid #ffe082; border-radius:12px;
+            padding:14px 16px; margin-bottom:24px; font-size:13px; color:#7a5800;
+            display:flex; gap:10px; align-items:flex-start; line-height:1.6;
+        }
+        .info-box i { margin-top:2px; color:#f59e0b; }
+
+        .footer { background:#071739; color:rgba(255,255,255,0.4); text-align:center; padding:22px; font-size:13px; margin-top:auto; }
+        @media(max-width:500px){ .form-card{padding:24px 16px;} .main-header{padding:0 16px;} }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <a href="home.jsp" class="header-logo"><i class="fas fa-paper-plane"></i> KP <span>Travels</span></a>
+    <nav class="header-nav">
+        <a href="home.jsp"><i class="fas fa-home"></i> Home</a>
+        <a href="reservation.html"><i class="fas fa-ticket-alt"></i> Book</a>
+        <a href="ProfileServlet"><i class="fas fa-user"></i> Profile</a>
+        <a href="LogoutServlet" style="color:#ff8a8a;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+</header>
+
+<div class="page-wrap">
+    <div class="page-title">
+        <span class="icon">🎫</span>
+        <h1>Cancel Your Ticket</h1>
+        <p>Enter your PNR number to cancel the booking</p>
+    </div>
+
+    <div class="form-card">
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <span>Cancellations are processed instantly. Refunds are credited within 5–7 business days to your original payment method.</span>
+        </div>
+
+        <form action="CancelServlet" method="post">
+            <div class="form-group">
+                <label><i class="fas fa-barcode"></i> PNR Number</label>
+                <input type="text" name="pnr" placeholder="e.g. PNR1234567" required maxlength="15">
+            </div>
+            <button type="submit" class="btn-cancel">
+                <i class="fas fa-times-circle"></i> Cancel Ticket
+            </button>
+        </form>
+
+        <div class="back-link">
+            <a href="home.jsp"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">© 2026 KP Travels | All Rights Reserved</footer>
+
+</body>
+</html>
