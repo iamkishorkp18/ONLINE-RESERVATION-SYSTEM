@@ -4,12 +4,6 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    private static final String URL =
-            "jdbc:mysql://localhost:3306/reservationdb?useSSL=false&serverTimezone=UTC";
-
-    private static final String USER = "root";
-    private static final String PASSWORD = "1911";
-
     public static Connection getConnection() {
 
         Connection con = null;
@@ -17,6 +11,11 @@ public class DBConnection {
         try {
             System.out.println("Loading MySQL Driver...");
             Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Read DB details from environment variables
+            String URL = System.getenv("DB_URL");
+            String USER = System.getenv("DB_USER");
+            String PASSWORD = System.getenv("DB_PASSWORD");
 
             System.out.println("Connecting to Database...");
 
