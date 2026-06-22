@@ -53,14 +53,14 @@ public class EmailService {
         System.out.println("================================");
 
         try {
-            Properties props = new Properties();
-            props.put("mail.smtp.host", "smtp-relay.brevo.com");
-            props.put("mail.smtp.port", "587");
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.connectiontimeout", "10000");
-            props.put("mail.smtp.timeout", "10000");
-            props.put("mail.smtp.writetimeout", "10000");
+        	Properties props = new Properties();
+        	props.put("mail.smtp.host", "smtp-relay.brevo.com");
+        	props.put("mail.smtp.port", "2525");
+        	props.put("mail.smtp.auth", "true");
+        	props.put("mail.smtp.starttls.enable", "true");
+        	props.put("mail.smtp.connectiontimeout", "20000");
+        	props.put("mail.smtp.timeout", "20000");
+        	props.put("mail.smtp.writetimeout", "20000");
 
             Session session = Session.getInstance(props,
                     new Authenticator() {
@@ -154,14 +154,14 @@ public class EmailService {
         System.out.println("================================");
 
         try {
-            Properties props = new Properties();
-            props.put("mail.smtp.host", "smtp-relay.brevo.com");
-            props.put("mail.smtp.port", "587");
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.connectiontimeout", "10000");
-            props.put("mail.smtp.timeout", "10000");
-            props.put("mail.smtp.writetimeout", "10000");
+        	Properties props = new Properties();
+        	props.put("mail.smtp.host", "smtp-relay.brevo.com");
+        	props.put("mail.smtp.port", "2525");
+        	props.put("mail.smtp.auth", "true");
+        	props.put("mail.smtp.starttls.enable", "true");
+        	props.put("mail.smtp.connectiontimeout", "20000");
+        	props.put("mail.smtp.timeout", "20000");
+        	props.put("mail.smtp.writetimeout", "20000");
 
             Session session = Session.getInstance(props,
                     new Authenticator() {
