@@ -105,6 +105,8 @@ public class EmailService {
             System.out.println("================================");
             e.printStackTrace();
         }
+        System.out.println("FROM_EMAIL = " + FROM_EMAIL);
+        System.out.println("BREVO_API_KEY loaded? " + (BREVO_API_KEY != null && !BREVO_API_KEY.isEmpty()));
     }
 
     // OTP email
@@ -196,29 +198,49 @@ public class EmailService {
     }
 
     // Common Brevo API caller
-    private static void callBrevoApi(String jsonBody) throws Exception {
-        URL url = new URL("https://api.brevo.com/v3/smtp/email");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    private static void callBrevoApi(String jsonPayload) throws Exception {
+
+        java.net.URL url = new java.net.URL("https://api.brevo.com/v3/smtp/email");
+        java.net.HttpURLConnection conn =
+                (java.net.HttpURLConnection) url.openConnection();
 
         conn.setRequestMethod("POST");
         conn.setRequestProperty("accept", "application/json");
-        conn.setRequestProperty("api-key", BREVO_API_KEY);
         conn.setRequestProperty("content-type", "application/json");
-        conn.setDoOutput(true);
-        conn.setConnectTimeout(20000);
-        conn.setReadTimeout(20000);
+        conn.setRequestProperty("api-key", BREVO_API_KEY);
 
-        try (OutputStream os = conn.getOutputStream()) {
-            os.write(jsonBody.getBytes("UTF-8"));
+        conn.setDoOutput(true);
+
+        try (java.io.OutputStream os = conn.getOutputStream()) {
+            byte[] input = jsonPayload.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            os.write(input, 0, input.length);
         }
 
         int responseCode = conn.getResponseCode();
 
+        java.io.InputStream stream =
+                (responseCode >= 200 && responseCode < 300)
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
+
+        String responseBody = "";
+        if (stream != null) {
+            responseBody = new String(
+                    stream.readAllBytes(),
+                    java.nio.charset.StandardCharsets.UTF_8
+            );
+        }
+
+        System.out.println("Brevo Response Code: " + responseCode);
+        System.out.println("Brevo Response Body: " + responseBody);
+
         if (responseCode != 201) {
-            throw new RuntimeException("Brevo API failed. HTTP code: " + responseCode);
+            throw new RuntimeException(
+                    "Brevo API failed. HTTP code: " + responseCode +
+                    " | Response: " + responseBody
+            );
         }
     }
-
     // Escape JSON special chars
     private static String escapeJson(String text) {
         if (text == null) return "";
