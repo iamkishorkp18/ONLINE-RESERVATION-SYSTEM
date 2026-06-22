@@ -6,10 +6,11 @@ import java.util.Properties;
 
 public class EmailService {
 
-    private static final String FROM_EMAIL = "peacelover0181@gmail.com";
-    private static final String EMAIL_PASSWORD = "zbujsqrtkvkgxzot";
+	private static final String FROM_EMAIL = System.getenv("FROM_EMAIL");
+	private static final String SMTP_USERNAME = System.getenv("SMTP_USERNAME");
+	private static final String SMTP_PASSWORD = System.getenv("SMTP_PASSWORD");
 
-    // ✅ Old method still works — calls new method with defaults
+    // Old method still works — calls new method with defaults
     public static void sendBookingConfirmation(
             String toEmail,
             String passengerName,
@@ -29,7 +30,7 @@ public class EmailService {
         );
     }
 
-    // ✅ New method — sends email WITH PDF ticket attached
+    // New method — sends email WITH PDF ticket attached
     public static void sendBookingConfirmationWithPdf(
             String toEmail,
             String passengerName,
@@ -52,23 +53,19 @@ public class EmailService {
         System.out.println("================================");
 
         try {
-
-        	Properties props = new Properties();
-        	props.put("mail.smtp.host", "smtp.gmail.com");
-        	props.put("mail.smtp.port", "465");
-        	props.put("mail.smtp.auth", "true");
-        	props.put("mail.smtp.ssl.enable", "true");
-        	props.put("mail.smtp.connectiontimeout", "10000");
-        	props.put("mail.smtp.timeout", "10000");
-        	props.put("mail.smtp.writetimeout", "10000");
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp-relay.brevo.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.connectiontimeout", "10000");
+            props.put("mail.smtp.timeout", "10000");
+            props.put("mail.smtp.writetimeout", "10000");
 
             Session session = Session.getInstance(props,
                     new Authenticator() {
                         protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(
-                                    FROM_EMAIL,
-                                    EMAIL_PASSWORD
-                            );
+                            return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
                         }
                     });
 
@@ -90,18 +87,16 @@ public class EmailService {
                     + "<p><b>Date:</b> " + journeyDate + "</p>"
                     + "<p><b>Travel Type:</b> " + travelType + "</p>"
                     + "<p><b>Class:</b> " + classType + "</p>"
-                    + "<p><b>Service:</b> "
-                    + (trainName == null ? "-" : trainName)
-                    + "</p>"
+                    + "<p><b>Service:</b> " + (trainName == null ? "-" : trainName) + "</p>"
                     + "<p><b>Fare:</b> ₹" + fare + "</p>"
                     + "<hr>"
-                    + "<p>📎 Please find your downloadable ticket attached as PDF.</p>"
+                    + "<p>Please find your downloadable ticket attached as PDF.</p>"
                     + "<p>Please carry a valid ID proof during the journey.</p>"
                     + "<p>Support: kptravels19@gmail.com</p>"
                     + "<p><b>KP Travels</b></p>"
                     + "</body></html>";
 
-            // ✅ Generate PDF ticket
+            // Generate PDF ticket
             byte[] pdfBytes = PdfTicketGenerator.generateTicketPdf(
                 pnr, passengerName, age, fromPlace, toPlace, journeyDate,
                 travelType, classType, trainName, trainNo, fare, paymentMethod
@@ -109,22 +104,17 @@ public class EmailService {
 
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(FROM_EMAIL, "KP Travels"));
-            message.setRecipients(
-                    Message.RecipientType.TO,
-                    InternetAddress.parse(toEmail)
-            );
-            message.setSubject(
-                    "Booking Confirmed - PNR: " + pnr + " | KP Travels"
-            );
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+            message.setSubject("Booking Confirmed - PNR: " + pnr + " | KP Travels");
 
-            // ✅ HTML body part
+            // HTML body part
             MimeBodyPart htmlPart = new MimeBodyPart();
             htmlPart.setContent(htmlBody, "text/html; charset=UTF-8");
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(htmlPart);
 
-            // ✅ PDF attachment part
+            // PDF attachment part
             if (pdfBytes != null) {
                 MimeBodyPart attachPart = new MimeBodyPart();
                 ByteArrayDataSource ds = new ByteArrayDataSource(pdfBytes, "application/pdf");
@@ -146,16 +136,15 @@ public class EmailService {
             System.out.println("================================");
 
         } catch (Exception e) {
-
             System.out.println("================================");
             System.out.println("EMAIL FAILED");
             System.out.println("Reason: " + e.getMessage());
             System.out.println("================================");
-
             e.printStackTrace();
         }
     }
- // ✅ Add this method inside EmailService.java
+
+    // Send OTP email for forgot password
     public static void sendOtpEmail(String toEmail, String fullname, String otp) {
 
         System.out.println("================================");
@@ -165,19 +154,19 @@ public class EmailService {
         System.out.println("================================");
 
         try {
-        	Properties props = new Properties();
-        	props.put("mail.smtp.host", "smtp.gmail.com");
-        	props.put("mail.smtp.port", "465");
-        	props.put("mail.smtp.auth", "true");
-        	props.put("mail.smtp.ssl.enable", "true");
-        	props.put("mail.smtp.connectiontimeout", "10000");
-        	props.put("mail.smtp.timeout", "10000");
-        	props.put("mail.smtp.writetimeout", "10000");
-        	
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp-relay.brevo.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.connectiontimeout", "10000");
+            props.put("mail.smtp.timeout", "10000");
+            props.put("mail.smtp.writetimeout", "10000");
+
             Session session = Session.getInstance(props,
                     new Authenticator() {
                         protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(FROM_EMAIL, EMAIL_PASSWORD);
+                            return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
                         }
                     });
 
@@ -204,10 +193,16 @@ public class EmailService {
 
             Transport.send(message);
 
-            System.out.println("OTP EMAIL SENT SUCCESSFULLY to: " + toEmail);
+            System.out.println("================================");
+            System.out.println("OTP EMAIL SENT SUCCESSFULLY");
+            System.out.println("Sent To: " + toEmail);
+            System.out.println("================================");
 
         } catch (Exception e) {
-            System.out.println("OTP EMAIL FAILED: " + e.getMessage());
+            System.out.println("================================");
+            System.out.println("OTP EMAIL FAILED");
+            System.out.println("Reason: " + e.getMessage());
+            System.out.println("================================");
             e.printStackTrace();
         }
     }
