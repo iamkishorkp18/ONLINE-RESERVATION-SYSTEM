@@ -53,11 +53,14 @@ public class EmailService {
 
         try {
 
-            Properties props = new Properties();
-            props.put("mail.smtp.host", "smtp.gmail.com");
-            props.put("mail.smtp.port", "587");
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
+        	Properties props = new Properties();
+        	props.put("mail.smtp.host", "smtp.gmail.com");
+        	props.put("mail.smtp.port", "465");
+        	props.put("mail.smtp.auth", "true");
+        	props.put("mail.smtp.ssl.enable", "true");
+        	props.put("mail.smtp.connectiontimeout", "10000");
+        	props.put("mail.smtp.timeout", "10000");
+        	props.put("mail.smtp.writetimeout", "10000");
 
             Session session = Session.getInstance(props,
                     new Authenticator() {
@@ -162,12 +165,15 @@ public class EmailService {
         System.out.println("================================");
 
         try {
-            Properties props = new Properties();
-            props.put("mail.smtp.host", "smtp.gmail.com");
-            props.put("mail.smtp.port", "587");
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
-
+        	Properties props = new Properties();
+        	props.put("mail.smtp.host", "smtp.gmail.com");
+        	props.put("mail.smtp.port", "465");
+        	props.put("mail.smtp.auth", "true");
+        	props.put("mail.smtp.ssl.enable", "true");
+        	props.put("mail.smtp.connectiontimeout", "10000");
+        	props.put("mail.smtp.timeout", "10000");
+        	props.put("mail.smtp.writetimeout", "10000");
+        	
             Session session = Session.getInstance(props,
                     new Authenticator() {
                         protected PasswordAuthentication getPasswordAuthentication() {
