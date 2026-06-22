@@ -1,14 +1,12 @@
-import javax.mail.*;
-import javax.mail.internet.*;
-import javax.mail.util.ByteArrayDataSource;
-import javax.activation.DataHandler;
-import java.util.Properties;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Base64;
 
 public class EmailService {
 
-	private static final String FROM_EMAIL = System.getenv("FROM_EMAIL");
-	private static final String SMTP_USERNAME = System.getenv("SMTP_USERNAME");
-	private static final String SMTP_PASSWORD = System.getenv("SMTP_PASSWORD");
+    private static final String FROM_EMAIL = System.getenv("FROM_EMAIL");
+    private static final String BREVO_API_KEY = System.getenv("BREVO_API_KEY");
 
     // Old method still works — calls new method with defaults
     public static void sendBookingConfirmation(
@@ -24,13 +22,13 @@ public class EmailService {
             String fare) {
 
         sendBookingConfirmationWithPdf(
-            toEmail, passengerName, pnr, fromPlace, toPlace,
-            journeyDate, travelType, classType, trainName, fare,
-            null, null, "Online"
+                toEmail, passengerName, pnr, fromPlace, toPlace,
+                journeyDate, travelType, classType, trainName, fare,
+                null, null, "Online"
         );
     }
 
-    // New method — sends email WITH PDF ticket attached
+    // Booking confirmation with PDF ticket attachment
     public static void sendBookingConfirmationWithPdf(
             String toEmail,
             String passengerName,
@@ -53,22 +51,6 @@ public class EmailService {
         System.out.println("================================");
 
         try {
-        	Properties props = new Properties();
-        	props.put("mail.smtp.host", "smtp-relay.brevo.com");
-        	props.put("mail.smtp.port", "2525");
-        	props.put("mail.smtp.auth", "true");
-        	props.put("mail.smtp.starttls.enable", "true");
-        	props.put("mail.smtp.connectiontimeout", "20000");
-        	props.put("mail.smtp.timeout", "20000");
-        	props.put("mail.smtp.writetimeout", "20000");
-
-            Session session = Session.getInstance(props,
-                    new Authenticator() {
-                        protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
-                        }
-                    });
-
             String icon = "flight".equalsIgnoreCase(travelType)
                     ? "Flight"
                     : "bus".equalsIgnoreCase(travelType)
@@ -77,58 +59,39 @@ public class EmailService {
 
             String htmlBody =
                     "<html><body style='font-family:Arial,sans-serif;'>"
-                    + "<h2>KP Travels - Booking Confirmation (" + icon + ")</h2>"
-                    + "<p>Hello <b>" + passengerName + "</b>,</p>"
-                    + "<p>Your booking has been confirmed. Your e-ticket PDF is attached.</p>"
-                    + "<hr>"
-                    + "<p><b>PNR:</b> " + pnr + "</p>"
-                    + "<p><b>From:</b> " + fromPlace + "</p>"
-                    + "<p><b>To:</b> " + toPlace + "</p>"
-                    + "<p><b>Date:</b> " + journeyDate + "</p>"
-                    + "<p><b>Travel Type:</b> " + travelType + "</p>"
-                    + "<p><b>Class:</b> " + classType + "</p>"
-                    + "<p><b>Service:</b> " + (trainName == null ? "-" : trainName) + "</p>"
-                    + "<p><b>Fare:</b> ₹" + fare + "</p>"
-                    + "<hr>"
-                    + "<p>Please find your downloadable ticket attached as PDF.</p>"
-                    + "<p>Please carry a valid ID proof during the journey.</p>"
-                    + "<p>Support: kptravels19@gmail.com</p>"
-                    + "<p><b>KP Travels</b></p>"
-                    + "</body></html>";
+                            + "<h2>KP Travels - Booking Confirmation (" + icon + ")</h2>"
+                            + "<p>Hello <b>" + passengerName + "</b>,</p>"
+                            + "<p>Your booking has been confirmed. Your e-ticket PDF is attached.</p>"
+                            + "<hr>"
+                            + "<p><b>PNR:</b> " + pnr + "</p>"
+                            + "<p><b>From:</b> " + fromPlace + "</p>"
+                            + "<p><b>To:</b> " + toPlace + "</p>"
+                            + "<p><b>Date:</b> " + journeyDate + "</p>"
+                            + "<p><b>Travel Type:</b> " + travelType + "</p>"
+                            + "<p><b>Class:</b> " + classType + "</p>"
+                            + "<p><b>Service:</b> " + (trainName == null ? "-" : trainName) + "</p>"
+                            + "<p><b>Fare:</b> ₹" + fare + "</p>"
+                            + "<hr>"
+                            + "<p>Please find your downloadable ticket attached as PDF.</p>"
+                            + "<p>Please carry a valid ID proof during the journey.</p>"
+                            + "<p>Support: kptravels19@gmail.com</p>"
+                            + "<p><b>KP Travels</b></p>"
+                            + "</body></html>";
 
             // Generate PDF ticket
             byte[] pdfBytes = PdfTicketGenerator.generateTicketPdf(
-                pnr, passengerName, age, fromPlace, toPlace, journeyDate,
-                travelType, classType, trainName, trainNo, fare, paymentMethod
+                    pnr, passengerName, age, fromPlace, toPlace, journeyDate,
+                    travelType, classType, trainName, trainNo, fare, paymentMethod
             );
 
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(FROM_EMAIL, "KP Travels"));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Booking Confirmed - PNR: " + pnr + " | KP Travels");
-
-            // HTML body part
-            MimeBodyPart htmlPart = new MimeBodyPart();
-            htmlPart.setContent(htmlBody, "text/html; charset=UTF-8");
-
-            Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(htmlPart);
-
-            // PDF attachment part
-            if (pdfBytes != null) {
-                MimeBodyPart attachPart = new MimeBodyPart();
-                ByteArrayDataSource ds = new ByteArrayDataSource(pdfBytes, "application/pdf");
-                attachPart.setDataHandler(new DataHandler(ds));
-                attachPart.setFileName("KPTravels_Ticket_" + pnr + ".pdf");
-                multipart.addBodyPart(attachPart);
-                System.out.println("PDF attached successfully, size: " + pdfBytes.length + " bytes");
-            } else {
-                System.out.println("PDF generation failed, sending email without attachment");
-            }
-
-            message.setContent(multipart);
-
-            Transport.send(message);
+            sendBrevoEmailWithPdf(
+                    toEmail,
+                    passengerName,
+                    "Booking Confirmed - PNR: " + pnr + " | KP Travels",
+                    htmlBody,
+                    pdfBytes,
+                    "KPTravels_Ticket_" + pnr + ".pdf"
+            );
 
             System.out.println("================================");
             System.out.println("EMAIL SENT SUCCESSFULLY WITH PDF");
@@ -144,7 +107,7 @@ public class EmailService {
         }
     }
 
-    // Send OTP email for forgot password
+    // OTP email
     public static void sendOtpEmail(String toEmail, String fullname, String otp) {
 
         System.out.println("================================");
@@ -154,44 +117,27 @@ public class EmailService {
         System.out.println("================================");
 
         try {
-        	Properties props = new Properties();
-        	props.put("mail.smtp.host", "smtp-relay.brevo.com");
-        	props.put("mail.smtp.port", "2525");
-        	props.put("mail.smtp.auth", "true");
-        	props.put("mail.smtp.starttls.enable", "true");
-        	props.put("mail.smtp.connectiontimeout", "20000");
-        	props.put("mail.smtp.timeout", "20000");
-        	props.put("mail.smtp.writetimeout", "20000");
-
-            Session session = Session.getInstance(props,
-                    new Authenticator() {
-                        protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
-                        }
-                    });
-
             String htmlBody =
                     "<html><body style='font-family:Arial,sans-serif;'>"
-                    + "<h2>KP Travels - Password Reset OTP</h2>"
-                    + "<p>Hello <b>" + (fullname != null ? fullname : "User") + "</b>,</p>"
-                    + "<p>You requested to reset your password. Use the OTP below to proceed:</p>"
-                    + "<div style='background:#f0f6ff;border:2px dashed #00c6ff;border-radius:10px;padding:20px;text-align:center;margin:20px 0;'>"
-                    + "<span style='font-size:32px;font-weight:bold;letter-spacing:8px;color:#0072ff;'>" + otp + "</span>"
-                    + "</div>"
-                    + "<p>This OTP is valid for <b>10 minutes</b> only.</p>"
-                    + "<p>If you did not request this, please ignore this email or contact support.</p>"
-                    + "<hr>"
-                    + "<p>Support: kptravels19@gmail.com</p>"
-                    + "<p><b>KP Travels Team</b></p>"
-                    + "</body></html>";
+                            + "<h2>KP Travels - Password Reset OTP</h2>"
+                            + "<p>Hello <b>" + (fullname != null ? fullname : "User") + "</b>,</p>"
+                            + "<p>You requested to reset your password. Use the OTP below to proceed:</p>"
+                            + "<div style='background:#f0f6ff;border:2px dashed #00c6ff;border-radius:10px;padding:20px;text-align:center;margin:20px 0;'>"
+                            + "<span style='font-size:32px;font-weight:bold;letter-spacing:8px;color:#0072ff;'>" + otp + "</span>"
+                            + "</div>"
+                            + "<p>This OTP is valid for <b>10 minutes</b> only.</p>"
+                            + "<p>If you did not request this, please ignore this email or contact support.</p>"
+                            + "<hr>"
+                            + "<p>Support: kptravels19@gmail.com</p>"
+                            + "<p><b>KP Travels Team</b></p>"
+                            + "</body></html>";
 
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(FROM_EMAIL, "KP Travels"));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Your OTP for Password Reset - KP Travels");
-            message.setContent(htmlBody, "text/html; charset=UTF-8");
-
-            Transport.send(message);
+            sendBrevoEmail(
+                    toEmail,
+                    fullname != null ? fullname : "User",
+                    "Your OTP for Password Reset - KP Travels",
+                    htmlBody
+            );
 
             System.out.println("================================");
             System.out.println("OTP EMAIL SENT SUCCESSFULLY");
@@ -205,5 +151,81 @@ public class EmailService {
             System.out.println("================================");
             e.printStackTrace();
         }
+    }
+
+    // Send normal email using Brevo API
+    private static void sendBrevoEmail(String toEmail, String toName, String subject, String htmlBody) throws Exception {
+        String json =
+                "{"
+                        + "\"sender\":{\"name\":\"KP Travels\",\"email\":\"" + escapeJson(FROM_EMAIL) + "\"},"
+                        + "\"to\":[{\"email\":\"" + escapeJson(toEmail) + "\",\"name\":\"" + escapeJson(toName) + "\"}],"
+                        + "\"subject\":\"" + escapeJson(subject) + "\","
+                        + "\"htmlContent\":\"" + escapeJson(htmlBody) + "\""
+                        + "}";
+
+        callBrevoApi(json);
+    }
+
+    // Send email with PDF attachment using Brevo API
+    private static void sendBrevoEmailWithPdf(
+            String toEmail,
+            String toName,
+            String subject,
+            String htmlBody,
+            byte[] pdfBytes,
+            String fileName) throws Exception {
+
+        StringBuilder json = new StringBuilder();
+        json.append("{");
+        json.append("\"sender\":{\"name\":\"KP Travels\",\"email\":\"").append(escapeJson(FROM_EMAIL)).append("\"},");
+        json.append("\"to\":[{\"email\":\"").append(escapeJson(toEmail)).append("\",\"name\":\"").append(escapeJson(toName)).append("\"}],");
+        json.append("\"subject\":\"").append(escapeJson(subject)).append("\",");
+        json.append("\"htmlContent\":\"").append(escapeJson(htmlBody)).append("\"");
+
+        if (pdfBytes != null && pdfBytes.length > 0) {
+            String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+            json.append(",\"attachment\":[{")
+                    .append("\"name\":\"").append(escapeJson(fileName)).append("\",")
+                    .append("\"content\":\"").append(base64Pdf).append("\"")
+                    .append("}]");
+        }
+
+        json.append("}");
+
+        callBrevoApi(json.toString());
+    }
+
+    // Common Brevo API caller
+    private static void callBrevoApi(String jsonBody) throws Exception {
+        URL url = new URL("https://api.brevo.com/v3/smtp/email");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("accept", "application/json");
+        conn.setRequestProperty("api-key", BREVO_API_KEY);
+        conn.setRequestProperty("content-type", "application/json");
+        conn.setDoOutput(true);
+        conn.setConnectTimeout(20000);
+        conn.setReadTimeout(20000);
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(jsonBody.getBytes("UTF-8"));
+        }
+
+        int responseCode = conn.getResponseCode();
+
+        if (responseCode != 201) {
+            throw new RuntimeException("Brevo API failed. HTTP code: " + responseCode);
+        }
+    }
+
+    // Escape JSON special chars
+    private static String escapeJson(String text) {
+        if (text == null) return "";
+        return text
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\r", "")
+                .replace("\n", "\\n");
     }
 }
